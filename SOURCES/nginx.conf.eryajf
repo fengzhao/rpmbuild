@@ -43,6 +43,7 @@ http {
     access_log /data/log/tmp.log json;
 
     sendfile        on;
+    underscores_in_headers on;
     gzip        on;
     gzip_comp_level     4;
     # must to add http_gzip_static_module
