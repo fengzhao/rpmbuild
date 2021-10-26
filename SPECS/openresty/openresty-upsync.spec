@@ -17,10 +17,11 @@ Source0:        https://openresty.org/download/openresty-%{version}.tar.gz
 %define         use_systemd   1
 %endif
 
-Source1:        openresty.service
-Source2:        openresty.init
-Source3:        nginx.conf.eryajf
-Source4:        nginx.logrotate
+# 为了便于区分SOURCE中的目录,故此处将需要的文件单独声明出来
+%define         SourceFile1     openresty.service
+%define         SourceFile2     openresty.init
+%define         SourceFile3     nginx.conf.eryajf
+%define         SourceFile4     nginx.logrotate
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -224,7 +225,7 @@ This package provides the client side tool, opm, for OpenResty Pakcage Manager (
     --with-http_gunzip_module \
     --with-threads \
     --with-compat \
-    --add-module=/root/rpmbuild/SOURCES/modules/nginx-upsync-module-v2.1.3 \
+    --add-module=/root/rpmbuild/SOURCES/openresty/modules/nginx-upsync-module-v2.1.3 \
     --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT' \
     -j`nproc`
 
@@ -250,15 +251,15 @@ ln -snf %{orprefix}/nginx/conf %{buildroot}/etc/nginx
 %if 0%{?use_systemd}
 
 mkdir -p %{buildroot}%{_unitdir}
-%{__install} -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
-%{__install} -p -m 0644 %{SOURCE4} %{buildroot}/etc/logrotate.d/nginx
-%{__install} -p -m 0644 %{SOURCE3} %{buildroot}%{orprefix}/nginx/conf/nginx.conf
+%{__install} -p -m 0644 %{_sourcedir}/openresty/%{SourceFile1} %{buildroot}%{_unitdir}/
+%{__install} -p -m 0644 %{_sourcedir}/openresty/%{SourceFile4} %{buildroot}/etc/logrotate.d/nginx
+%{__install} -p -m 0644 %{_sourcedir}/openresty/%{SourceFile3} %{buildroot}%{orprefix}/nginx/conf/nginx.conf
 mkdir -p %{buildroot}%{orprefix}/nginx/conf/vhost
 
 %else
 
 mkdir -p %{buildroot}/etc/init.d
-%{__install} -p -m 0755 %{SOURCE2} %{buildroot}/etc/init.d/%{name}
+%{__install} -p -m 0755 %{_sourcedir}/openresty/%{SourceFile2} %{buildroot}/etc/init.d/%{name}
 
 %endif
 
