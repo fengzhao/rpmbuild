@@ -22,6 +22,7 @@ Source0:        https://openresty.org/download/openresty-%{version}.tar.gz
 %define         SourceFile2     openresty.init
 %define         SourceFile3     nginx.conf.eryajf
 %define         SourceFile4     nginx.logrotate
+%define         SourceFile5     nginx_status.conf
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -255,7 +256,7 @@ mkdir -p %{buildroot}%{_unitdir}
 %{__install} -p -m 0644 %{_sourcedir}/openresty/%{SourceFile4} %{buildroot}/etc/logrotate.d/nginx
 %{__install} -p -m 0644 %{_sourcedir}/openresty/%{SourceFile3} %{buildroot}%{orprefix}/nginx/conf/nginx.conf
 mkdir -p %{buildroot}%{orprefix}/nginx/conf/vhost
-
+%{__install} -p -m 0644 %{_sourcedir}/openresty/%{SourceFile5} %{buildroot}%{orprefix}/nginx/conf/vhost/nginx_status.conf
 %else
 
 mkdir -p %{buildroot}/etc/init.d
