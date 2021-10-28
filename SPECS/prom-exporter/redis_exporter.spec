@@ -1,24 +1,22 @@
 %define debug_package %{nil}
 %define user prometheus
 %define group prometheus
-# 源文件名字
-%define SourceName nginx-prometheus-exporter
 
-Name:           nginx_exporter
-Version:        0.9.0
+Name:           redis_exporter
+Version:        1.29.0
 Release:        1.eryajf%{?dist}
-Summary:        Prometheus exporter for machine metrics, written in Go with pluggable metric collectors.
+Summary:        Prometheus exporter for Redis server metrics.
 License:        ASL 2.0
 Packager:       https://github.com/eryajf
-URL:            https://github.com/nginxinc/nginx-prometheus-exporter
+URL:            https://github.com/oliver006/redis_exporter
 
 # 通常,你应该在公司内部搭建一个内网file程序,然后将一些日常构建所需的包放置在里边
-Source0:        http://pkg.eryajf.net/package/prometheus/%{SourceName}_%{version}_linux_amd64.tar.gz
+Source0:        http://pkg.eryajf.net/package/prometheus/%{name}-v%{version}.linux-amd64.tar.gz
 
 # 为了便于区分SOURCE中的目录,故此处将需要的文件单独声明出来
-%define         SourceFile1     %{name}.unit
-%define         SourceFile2     %{name}.default
-%define         SourceFile3     %{name}.init
+%define         SourceFile1     %{name}.default
+%define         SourceFile2     %{name}.init
+%define         SourceFile3     %{name}.conf
 
 
 Requires(pre): shadow-utils
@@ -29,14 +27,11 @@ Requires(preun): initscripts
 
 
 %description
-NGINX Prometheus exporter makes it possible to monitor NGINX or NGINX Plus using Prometheus.
+Prometheus Exporter for Redis Metrics. Supports Redis 2.x, 3.x and 4.x
 
 
-# 一些exporter目录非标准化,可在这里通过一些手段将之标准化
 %prep
-%setup -c -q -n %{name}-%{version}.linux_amd64
-mv %{SourceName} %{name}
-
+%setup -q -n %{name}-v%{version}.linux-amd64
 
 %build
 /bin/true
@@ -44,12 +39,14 @@ mv %{SourceName} %{name}
 
 %install
 mkdir -vp %{buildroot}%{_sharedstatedir}/prometheus
+mkdir -vp %{_sysconfdir}/%{name}
 install -D -m 755 %{name} %{buildroot}%{_bindir}/%{name}
-install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile2} %{buildroot}%{_sysconfdir}/default/%{name}
+install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile1} %{buildroot}%{_sysconfdir}/default/%{name}
+install -D -m 640 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile3} %{buildroot}%{_sysconfdir}/%{name}.conf
 %if 0%{?el5}
-install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile3} %{buildroot}%{_initrddir}/%{name}
-%else
-    install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile3} %{buildroot}%{_initddir}/%{name}
+install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile2} %{buildroot}%{_initrddir}/%{name}
+%else 
+    install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile2} %{buildroot}%{_initddir}/%{name}
 %endif
 
 
@@ -84,6 +81,7 @@ fi
 %{_bindir}/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %dir %attr(755, %{user}, %{group}) %{_sharedstatedir}/prometheus
+%config(noreplace) %attr(755, %{user}, %{group}) %{_sysconfdir}/%{name}.conf
 %if 0%{?el5}
 %{_initrdddir}/%{name}
 %else
