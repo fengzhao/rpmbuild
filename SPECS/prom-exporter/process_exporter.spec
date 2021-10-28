@@ -1,8 +1,10 @@
 %define debug_package %{nil}
 %define user prometheus
 %define group prometheus
+# 源文件名字
+%define SourceName process-exporter
 
-Name:           process-exporter
+Name:           process_exporter
 Version:        0.7.7
 Release:        1.eryajf%{?dist}
 Summary:        Prometheus exporter that mines /proc to report on selected processes.
@@ -11,7 +13,7 @@ Packager:       https://github.com/eryajf
 URL:            https://github.com/ncabatoff/process-exporter
 
 # 通常,你应该在公司内部搭建一个内网file程序,然后将一些日常构建所需的包放置在里边
-Source0:        http://pkg.eryajf.net/package/prometheus/%{name}-%{version}.linux-amd64.tar.gz
+Source0:        http://pkg.eryajf.net/package/prometheus/%{SourceName}-%{version}.linux-amd64.tar.gz
 
 # 为了便于区分SOURCE中的目录,故此处将需要的文件单独声明出来
 %define         SourceFile2     %{name}.default
@@ -31,10 +33,10 @@ Prometheus exporter that mines /proc to report on selected processes,
 written in Go with pluggable metric collectors.
 
 
-
+# 一些exporter目录非标准化,可在这里通过一些手段将之标准化
 %prep
-%setup -q -n %{name}-%{version}.linux-amd64
-
+%setup -c -q -n %{name}-%{version}.linux-amd64
+mv %{SourceName}-%{version}.linux-amd64/%{SourceName} %{name}
 
 %build
 /bin/true

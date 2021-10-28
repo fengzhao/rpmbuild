@@ -1,6 +1,8 @@
 %define debug_package %{nil}
 %define user prometheus
 %define group prometheus
+# 源文件名字
+%define SourceName nginx-prometheus-exporter
 
 Name:           nginx_exporter
 Version:        0.9.0
@@ -11,7 +13,7 @@ Packager:       https://github.com/eryajf
 URL:            https://github.com/nginxinc/nginx-prometheus-exporter
 
 # 通常,你应该在公司内部搭建一个内网file程序,然后将一些日常构建所需的包放置在里边
-Source0:        http://pkg.eryajf.net/package/prometheus/%{name}-%{version}.linux-amd64.tar.gz
+Source0:        http://pkg.eryajf.net/package/prometheus/%{SourceName}_%{version}_linux_amd64.tar.gz
 
 # 为了便于区分SOURCE中的目录,故此处将需要的文件单独声明出来
 %define         SourceFile1     %{name}.unit
@@ -27,12 +29,13 @@ Requires(preun): initscripts
 
 
 %description
-Prometheus exporter for hardware and OS metrics exposed by *NIX kernels, 
+NGINX Prometheus exporter makes it possible to monitor NGINX or NGINX Plus using Prometheus.
 
 
 
 %prep
-%setup -c -q -n %{name}-v%{version}.linux-amd64
+%setup -c -q -n %{name}-%{version}.linux_amd64
+mv %{SourceName} %{name}
 
 
 %build
@@ -45,7 +48,7 @@ install -D -m 755 %{name} %{buildroot}%{_bindir}/%{name}
 install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile2} %{buildroot}%{_sysconfdir}/default/%{name}
 %if 0%{?el5}
 install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile3} %{buildroot}%{_initrddir}/%{name}
-%else 
+%else
     install -D -m 644 %{_sourcedir}/prom-exporter/%{name}/%{SourceFile3} %{buildroot}%{_initddir}/%{name}
 %endif
 
