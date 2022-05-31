@@ -33,7 +33,8 @@ yum -y install rpm-build redhat-rpm-config rpmdevtools
 
 
 # 编译openresty所需依赖
-yum -y install gcc gcc-c++ systemtap-sdt-devel openresty-zlib-devel openresty-openssl-devel openresty-pcre-devel gd-devel openresty-openssl111-devel ccache
+yum -y install gcc gcc-c++ systemtap-sdt-devel openresty-zlib-devel \
+    openresty-openssl-devel openresty-pcre-devel gd-devel openresty-openssl111-devel ccache
 
 # 下载spec中定义的源码文件
 cd /root/rpmbuild/SPECS/openresty/   &&  spectool -g -R openresty.spec
